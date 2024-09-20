@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+    <meta charset="UTF-8">
+    <title>Авторизация</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background: linear-gradient(to right, #fbc2eb, #a6c0fe);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+        .btn-primary {
+            background-color: #9f28a7;
+            border-color: #9628a7;
+        }
+        .btn-primary:hover {
+            background-color: #752188;
+            border-color: #741e7e;
+        }
+        .form-group label {
+            font-weight: bold;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-actions {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1 class="text-center">Авторизация</h1>
+    <div th:if="${param.error}" class="alert alert-danger">
+        Неверное имя пользователя или пароль.
+    </div>
+    <form th:action="@{/login}" method="post">
+        <div class="form-group">
+            <label for="username">Логин:</label>
+            <input type="text" id="username" name="username" class="form-control" required/>
+        </div>
+        <div class="form-group">
+            <label for="password">Пароль:</label>
+            <input type="password" id="password" name="password" class="form-control" required/>
+        </div>
+        <div class="form-actions">
+            <input type="submit" class="btn btn-primary" value="Авторизация"/>
+        </div>
+        <div class="form-actions mt-3">
+            <a href="/registration" class="btn btn-link">Регистрация</a>
+        </div>
+    </form>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Меню</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background: linear-gradient(to right, #fbc2eb, #a6c0fe);
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 800px;
+            margin: auto;
+        }
+        .btn-primary {
+            background-color: #9f28a7;
+            border-color: #9628a7;
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #752188;
+            border-color: #741e7e;
+        }
+        .btn-success {
+            background-color: #9f28a7;
+            border-color: #9628a7;
+            color: white;
+        }
+        .btn-success:hover {
+            background-color: #752188;
+            border-color: #741e7e;
+        }
+        .form-group label {
+            font-weight: bold;
+        }
+        h1, h2 {
+            text-align: center;
+        }
+        .navbar {
+            margin-bottom: 30px;
+            height: 80px;
+        }
+        .navbar-brand {
+            font-weight: bold;
+            font-size: 1.5rem;
+            line-height: 80px;
+        }
+        .navbar-nav .nav-item .nav-link {
+            line-height: 80px;
+            padding: 0 15px;
+        }
+        .container li {
+            list-style: none;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+        .container ul {
+            padding-left: 0;
+        }
+        .table th, .table td {
+            text-align: center;
+            vertical-align: middle;
+        }
+        .table th {
+            background-color: #f1f1f1;
+            color: #333;
+        }
+        .table td {
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="/home">Ресторан</a>
+    <div class="collapse navbar-collapse">
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link" href="/menus">Меню</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/categories">Категории</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/customers">Клиенты</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/orders">Заказы</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/orderItems">Элементы заказа</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/waiters">Официанты</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/tables">Столы</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/payments">Платежи</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/admin/users">Административная страница</a>
+            </li>
+        </ul>
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="/logout">Выйти</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<div class="container">
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th>Логин</th>
+            <th>Роли</th>
+            <th>Действие</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="el : ${user_list}">
+            <td th:text="${el.username}"></td>
+            <td>
+                <div th:each="role : ${el.roles}">
+                    <p th:text="${role}"></p>
+                </div>
+            </td>
+            <td>
+                <a class="btn btn-primary"
+                   th:href="'/admin/'+${el.idUser}">Подробнее...</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div class="text-center mb-4">
+        <a href="/registration" class="btn btn-success">Новый пользователь</a>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

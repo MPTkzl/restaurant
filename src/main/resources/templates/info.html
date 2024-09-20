@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security6">
+<head>
+    <meta charset="UTF-8">
+    <title>Подробная информация</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background: linear-gradient(to right, #fbc2eb, #a6c0fe);
+            padding-top: 20px;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            margin: auto;
+            text-align: center;
+        }
+        h1, h2 {
+            margin-bottom: 20px;
+        }
+        .btn {
+            margin: 10px;
+        }
+
+        .btn-success {
+            background-color: #da37e5;
+            border-color: #bc31d2;
+        }
+        .btn-success:hover {
+            background-color: #992bb2;
+            border-color: #9426a1;
+        }
+        p {
+            font-size: 1.2rem;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1 th:text="'Пользователь: ' + ${user_object.username}"></h1>
+    <h2 th:text="'Роли: ' + ${user_object.roles}"></h2>
+    <p th:text="${user_object.active} == True ? 'Пользователь активен' : 'Пользователь не активен'"></p>
+
+    <div class="text-center">
+        <a sec:authorize="hasAuthority('ADMIN')"
+           th:href="'/admin/' + ${user_object.idUser} + '/update'"
+           class="btn btn-success">Редактировать</a>
+
+        <a href="/admin/users" class="btn btn-success">Назад</a>
+    </div>
+</div>
+</body>
+</html>

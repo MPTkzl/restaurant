@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+    <meta charset="UTF-8">
+    <title>Элементы заказа</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background: linear-gradient(to right, #fbc2eb, #a6c0fe);
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
+        }
+        .btn-primary {
+            background-color: #9f28a7;
+            border-color: #9628a7;
+        }
+        .btn-primary:hover {
+            background-color: #752188;
+            border-color: #741e7e;
+        }
+        .form-group label {
+            font-weight: bold;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        h1, h2 {
+            text-align: center;
+        }
+        .form-actions {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+        .pagination {
+            display: flex;
+            justify-content: center;
+        }
+
+        .navbar {
+            margin-bottom: 30px;
+            height: 80px;
+        }
+        .navbar-brand {
+            font-weight: bold;
+            font-size: 1.5rem;
+            line-height: 80px;
+        }
+        .navbar-nav .nav-item .nav-link {
+            line-height: 80px;
+            padding: 0 15px;
+        }
+
+        .container li {
+            list-style: none;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+
+        .container ul{
+            padding-left: 0;
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="/home">Ресторан</a>
+    <div class="collapse navbar-collapse">
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link" href="/menus">Меню</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/categories">Категории</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/customers">Клиенты</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/orders">Заказы</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/orderItems">Элементы заказа</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/waiters">Официанты</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/tables">Столы</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/payments">Платежи</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/admin/users">Административная страница</a>
+            </li>
+        </ul>
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="/logout">Выйти</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<div class="container">
+    <h1>Список элементов заказа</h1>
+
+    <sec:authorize access="hasAnyAuthority('ADMIN', 'WAITER')">
+        <form action="/orderItems/add" method="post" th:object="${orderItem}">
+            <div class="form-group">
+                <label for="price">Цена:</label>
+                <input type="number" name="price" id="price" th:field="*{price}" class="form-control" required>
+                <div th:if="${#fields.hasErrors('price')}" th:errors="*{price}" class="text-danger">Цена не может быть меньше 1</div>
+            </div>
+
+            <div class="form-group">
+                <label for="quantity">Количество:</label>
+                <input type="number" name="quantity" id="quantity" th:field="*{quantity}" class="form-control" required>
+                <div th:if="${#fields.hasErrors('quantity')}" th:errors="*{quantity}" class="text-danger">Количество не может быть меньше 1</div>
+            </div>
+
+            <div class="form-group">
+                <label for="menu">Блюдо:</label>
+                <select id="menu" name="menu" th:field="*{menu}" class="form-control">
+                    <option th:each="menu : ${menus}" th:value="${menu.id}" th:text="${menu.name}"></option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="order">Заказ:</label>
+                <select id="order" name="order" th:field="*{order}" class="form-control">
+                    <option th:each="order : ${orders}" th:value="${order.id}" th:text="${order.id}"></option>
+                </select>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Добавить элемент заказа</button>
+            </div>
+        </form>
+    </sec:authorize>
+
+
+    <h2>Все элементы заказа:</h2>
+    <ul>
+        <th:block th:each="orderItem : ${orderItems}">
+            <li>
+                <span th:if="${not orderItem.deleted}">
+                    <span th:text="${orderItem.menu.name} + ' ' + ${orderItem.price} + ' ' + ${orderItem.quantity} + ' ' + ${orderItem.order.id}"></span>
+
+                    <sec:authorize access="hasAnyAuthority('ADMIN', 'WAITER')">
+                        <form action="/orderItems/update" method="post" style="display:inline;">
+                        <input type="hidden" name="id" th:value="${orderItem.id}">
+                        <div class="form-group">
+                            <label for="priceUpdate">Цена:</label>
+                            <input type="number" name="price" id="priceUpdate" th:value="${orderItem.price}" class="form-control" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="quantityUpdate">Количество:</label>
+                            <input type="number" name="quantity" id="quantityUpdate" th:value="${orderItem.quantity}" class="form-control" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="menuUpdate">Блюдо:</label>
+                            <select id="menuUpdate" name="menu" class="form-control">
+                                <option th:each="menu : ${menus}" th:value="${menu.id}" th:text="${menu.name}" th:selected="${menu.id == orderItem.menu.id}"></option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="orderUpdate">Заказ:</label>
+                            <select id="orderUpdate" name="order" class="form-control">
+                                <option th:each="order : ${orders}" th:value="${order.id}" th:text="${order.id}" th:selected="${order.id == orderItem.order.id}"></option>
+                            </select>
+                        </div>
+
+                        <div class="button-group">
+                            <button type="submit" class="btn btn-primary">Обновить</button>
+                            <form action="/orderItems/delete" method="post" style="display:inline;">
+                                <input type="hidden" name="id" th:value="${orderItem.id}">
+                                <button type="submit" class="btn btn-danger">Удалить логически</button>
+                            </form>
+                            <form action="/orderItems/delete" method="post" style="display:inline;">
+                                <input type="hidden" name="id" th:value="${orderItem.id}">
+                                <input type="hidden" name="physical" value="true">
+                                <button type="submit" class="btn btn-danger">Удалить физически</button>
+                            </form>
+                        </div>
+                    </form>
+                    </sec:authorize>
+                </span>
+            </li>
+        </th:block>
+    </ul>
+
+    <div th:if="${totalPages > 1}" class="mt-3">
+        <nav>
+            <ul class="pagination">
+                <li class="page-item" th:if="${currentPage > 0}">
+                    <a class="page-link" th:href="@{/orderItems(page=${currentPage - 1})}">Предыдущая</a>
+                </li>
+                <th:block th:each="i : ${#numbers.sequence(0, totalPages - 1)}">
+                    <li class="page-item" th:classappend="${currentPage == i} ? 'active' : ''">
+                        <a class="page-link" th:href="@{/orderItems(page=${i})}" th:text="${i + 1}"></a>
+                    </li>
+                </th:block>
+                <li class="page-item" th:if="${currentPage < totalPages - 1}">
+                    <a class="page-link" th:href="@{/orderItems(page=${currentPage + 1})}">Следующая</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
