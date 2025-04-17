@@ -24,3 +24,14 @@ server:
   error:
     whitelabel:
       enabled: false
+
+management:
+  server:
+    port: 8818
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    prometheus:
+      enabled: true

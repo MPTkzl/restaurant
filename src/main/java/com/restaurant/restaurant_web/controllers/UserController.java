@@ -46,9 +46,11 @@ public class UserController {
     @PostMapping("/{id}/update")
     public String updateUser(@PathVariable Long id,
                              @RequestParam String username,
+                             @RequestParam(defaultValue = "false") boolean active,
                              @RequestParam(name = "roles[]", required = false) String[] roles) {
         ModelUser user = userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Пользователя не существует:" + id));
         user.setUsername(username);
+        user.setActive(active);
         user.getRoles().clear();
         if (roles != null) {
             for (String role : roles) {
@@ -58,4 +60,5 @@ public class UserController {
         userRepository.save(user);
         return "redirect:/admin/" + id;
     }
+
 }
