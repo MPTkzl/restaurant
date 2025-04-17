@@ -14,6 +14,9 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.session.HttpSessionEventPublisher;
+import org.springframework.security.core.session.SessionRegistry;
+import org.springframework.security.web.session.ConcurrentSessionFilter;
 
 import java.util.Collections;
 
@@ -23,6 +26,9 @@ import java.util.Collections;
 public class WebSecurityConfig {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private SessionRegistry sessionRegistry;
 
     public WebSecurityConfig(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
@@ -64,16 +70,30 @@ public class WebSecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests(authorize ->
-                        authorize.requestMatchers("/login", "/registration", "/actuator/**").permitAll()
-                                .anyRequest().authenticated())
-                .formLogin(form -> form.loginPage("/login").defaultSuccessUrl("/home", true).permitAll())
+        http
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/login", "/registration", "/actuator/**").permitAll()
+                        .anyRequest().authenticated())
+                .formLogin(form -> form
+                        .loginPage("/login")
+                        .defaultSuccessUrl("/home", true)
+                        .permitAll())
                 .logout(logout -> logout.permitAll())
+                .sessionManagement(session -> session
+                        .maximumSessions(10)
+                        .maxSessionsPreventsLogin(true)
+                        .sessionRegistry(sessionRegistry))
                 .csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.disable());
 
         return http.build();
     }
+
+    @Bean
+    public static HttpSessionEventPublisher httpSessionEventPublisher() {
+        return new HttpSessionEventPublisher();
+    }
+
 
 
 
